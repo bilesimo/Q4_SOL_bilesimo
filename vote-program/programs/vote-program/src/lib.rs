@@ -52,6 +52,7 @@ impl<'info> Initialize<'info> {
 #[derive(Accounts)]
 #[instruction(_url: String)]
 pub struct Vote<'info> {
+    pub voter: Signer<'info>,
     #[account(
         mut,
         seeds = [_url.as_bytes().as_ref()],
@@ -63,10 +64,12 @@ pub struct Vote<'info> {
 impl<'info> Vote<'info> {
     pub fn upvote(&mut self) -> Result<()> {
         self.vote_account.score += 1;
+        self.vote_account.last_address = self.voter.key();
         Ok(())
     }
     pub fn downvote(&mut self) -> Result<()> {
         self.vote_account.score -= 1;
+        self.vote_account.last_address = self.voter.key();
         Ok(())
     }
 }
@@ -75,8 +78,9 @@ impl<'info> Vote<'info> {
 pub struct VoteState {
     pub score: i64,
     pub bump: u8,
+    pub last_address: Pubkey,
 }
 
 impl Space for VoteState {
-    const INIT_SPACE: usize = 8 + 8 + 1;
+    const INIT_SPACE: usize = 8 + 8 + 1 + 32;
 }
