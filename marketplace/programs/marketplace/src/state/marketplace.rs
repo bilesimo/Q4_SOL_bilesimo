@@ -4,11 +4,10 @@ use anchor_lang::prelude::*;
 pub struct Marketplace {
     pub admin: Pubkey,
     pub fee: u16,
+    pub bump: u8,
     pub treasury_bump: u8,
     pub rewards_bump: u8,
-    pub bump: u8,
-    //#[max_len(32)] to set max len of the String
-    pub name: String,
+    pub name: String, //Set this at max length of 32
 }
 
 impl Space for Marketplace {
